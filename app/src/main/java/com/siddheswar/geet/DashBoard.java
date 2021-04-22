@@ -3,7 +3,14 @@ package com.siddheswar.geet;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
+import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.karumi.dexter.Dexter;
@@ -13,19 +20,53 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.io.File;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class DashBoard extends AppCompatActivity {
+
+    ListView listView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
+
+        listView = findViewById(R.id.ListViewDashBoard);
         Dexter.withContext(this)
                 .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                        Toast.makeText(DashBoard.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+
+                    ArrayList<File> MySongs = getsong(Environment.getExternalStorageDirectory());
+                    String [] songs =  new String[MySongs.size()];
+                    for(int i =0; i<MySongs.size();i++)
+                    {
+                        songs[i] = MySongs.get(i).getName().replace(".mp3"," ");
+
+                    }
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(DashBoard.this, android.R.layout.simple_list_item_1,songs);
+                    listView.setAdapter(adapter);
+
+
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Intent i = new Intent(DashBoard.this, MainActivity.class);
+                            String currentSong = listView.getItemAtPosition(position).toString();
+                            i.putExtra("mysong", MySongs);
+                            i.putExtra("currentSong",currentSong);
+                            i.putExtra("position",position);
+                            startActivity(i);
+                        }
+                    });
+
+
+
+
                     }
 
                     @Override
@@ -43,12 +84,36 @@ public class DashBoard extends AppCompatActivity {
                 })
                 .check();
 
-
-
-
-
-
-
-
     }
+    public ArrayList<File> getsong(File file){
+        ArrayList  arrayList = new ArrayList<>();
+        File[] songs = file.listFiles();
+
+        if(songs!= null)
+        {
+            for(File myfile : songs)
+            {
+                if(!myfile.isHidden() && myfile.isDirectory())
+                {
+                    arrayList.addAll(getsong(myfile));
+
+                }
+                else
+                {
+                    if(myfile.getName().endsWith(".mp3")&& !myfile.getName().startsWith("."))
+                    {
+                        arrayList.add(myfile);
+                    }
+                }
+
+            }
+        }
+
+
+        return arrayList;
+    }
+
+
+
+
 }
