@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     SeekBar SongSeekBar;
     Thread Seek;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         play = findViewById(R.id.play);
         next = findViewById(R.id.next);
         SongSeekBar = findViewById(R.id.SongSeekBar);
+
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -135,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
                 mediaPlayer.start();
                 play.setImageResource(R.drawable.ic_baseline_pause_24);
-                
+
 
             }
         });
