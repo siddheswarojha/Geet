@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     @Override
+    // on closing the app media player gets stopped.
     protected void onDestroy() {
         super.onDestroy();
         mediaPlayer.stop();
@@ -167,12 +168,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-
-
-
 
 
     }

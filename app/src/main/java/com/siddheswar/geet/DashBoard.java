@@ -35,6 +35,10 @@ public class DashBoard extends AppCompatActivity {
         setContentView(R.layout.activity_dash_board);
 
         listView = findViewById(R.id.ListViewDashBoard);
+
+        /* Dexter Library used for seeking permission from user
+        for reading the data from storage
+         */
         Dexter.withContext(this)
                 .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 .withListener(new PermissionListener() {
@@ -45,6 +49,7 @@ public class DashBoard extends AppCompatActivity {
                     String [] songs =  new String[MySongs.size()];
                     for(int i =0; i<MySongs.size();i++)
                     {
+                        /* removes .mp3 from the end of the song name*/
                         songs[i] = MySongs.get(i).getName().replace(".mp3"," ");
 
                     }
@@ -57,9 +62,9 @@ public class DashBoard extends AppCompatActivity {
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             Intent i = new Intent(DashBoard.this, MainActivity.class);
                             String currentSong = listView.getItemAtPosition(position).toString();
-                            i.putExtra("mysong", MySongs);
-                            i.putExtra("currentSong",currentSong);
-                            i.putExtra("position",position);
+                            i.putExtra("mysong", MySongs); // sending Arraylist to next activity
+                            i.putExtra("currentSong",currentSong); // sending the clicked song
+                            i.putExtra("position",position); //sending the position to next activity
                             startActivity(i);
                         }
                     });
@@ -71,6 +76,8 @@ public class DashBoard extends AppCompatActivity {
 
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                       // if permission denied displays this message
+
                         Toast.makeText(DashBoard.this, "Permission Denied", Toast.LENGTH_SHORT).show();
 
 
@@ -78,13 +85,15 @@ public class DashBoard extends AppCompatActivity {
 
                     @Override
                     public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-
+                    //  if permission is niether accepted nor denied then it sends request again when the app is opened
                         permissionToken.continuePermissionRequest();
                     }
                 })
                 .check();
 
     }
+
+    //get song function for reading the data. The data gets added on the arraylist.
     public ArrayList<File> getsong(File file){
         ArrayList  arrayList = new ArrayList<>();
         File[] songs = file.listFiles();
